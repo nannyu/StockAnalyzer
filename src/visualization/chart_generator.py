@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 import matplotlib.font_manager as fm
+from typing import Dict
 
 class ChartGenerator:
     def __init__(self):
@@ -69,3 +70,39 @@ class ChartGenerator:
                 
         except Exception as e:
             raise Exception(f"生成线图失败: {str(e)}") 
+
+    def generate_portfolio_chart(self, stock_data: dict, portfolio: dict, save_path: str):
+        """
+        生成投资组合走势图
+        
+        Args:
+            stock_data: 字典，键为股票代码，值为该股票的DataFrame
+            portfolio: 字典，键为股票代码，值为权重
+            save_path: 图表保存路径
+        """
+        plt.figure(figsize=(12, 6))
+        
+        # 计算每只股票的归一化价格
+        for stock_code, df in stock_data.items():
+            # 归一化价格（设第一天为100）
+            normalized_price = df['close'] / df['close'].iloc[0] * 100
+            # 使用DataFrame的索引作为日期
+            plt.plot(df.index, normalized_price, 
+                    label=f'{stock_code} ({portfolio[stock_code]*100:.0f}%)')
+        
+        # 设置图表属性
+        plt.title('投资组合走势图（起始值=100）', fontsize=12)
+        plt.xlabel('日期')
+        plt.ylabel('价格（归一化）')
+        plt.grid(True)
+        plt.legend()
+        
+        # 旋转日期标签以防重叠
+        plt.xticks(rotation=45)
+        
+        # 自动调整布局
+        plt.tight_layout()
+        
+        # 保存图表
+        plt.savefig(save_path)
+        plt.close() 
