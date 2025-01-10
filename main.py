@@ -30,15 +30,18 @@ class StockAnalyzer:
             annual_return = self.calculator.calculate_annual_return(df)
             print(f"年平均回报率: {annual_return:.2%}")
             
-            # 4. 生成并显示K线图
+            # 4. 生成月度数据
+            monthly_df = self.data_processor.resample_monthly(df)
+            
+            # 5. 生成并保存走势图
             save_path = f"charts/{stock_code}_chart.png"
             os.makedirs("charts", exist_ok=True)
-            self.chart_generator.generate_candlestick_chart(
-                df, 
+            self.chart_generator.generate_line_chart(
+                monthly_df,
                 save_path,
-                warn_too_much_data=len(df) + 1000  # 添加参数避免警告
+                title=f"{stock_code} 月度股价走势"
             )
-            print(f"K线图已保存至: {save_path}")
+            print(f"走势图已保存至: {save_path}")
             
         except Exception as e:
             print(f"分析过程中出现错误: {str(e)}")
