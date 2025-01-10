@@ -1,0 +1,7 @@
+charts/
+*.png
+*.csv
+venv/
+__pycache__/
+.idea/
+.vscode/
